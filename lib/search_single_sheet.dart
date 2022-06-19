@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-class SearchSheet extends StatefulWidget {
+// ignore: must_be_immutable
+class SearchSingleSelectSheet extends StatefulWidget {
   List searchList = [];
   BuildContext context;
   Color? color;
@@ -21,7 +22,7 @@ class SearchSheet extends StatefulWidget {
   TextStyle? searchTextStyle;
   TextStyle? headerTextStyle;
 
-  SearchSheet(
+  SearchSingleSelectSheet(
       {Key? key,
       required this.searchList,
       required this.context,
@@ -45,12 +46,12 @@ class SearchSheet extends StatefulWidget {
   showSheet() async {
     await showModalBottomSheet(
         context: context,
-        // backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         isScrollControlled: true,
         builder: (context) {
           return Container(
             color: color,
-            child: SearchSheet(
+            child: SearchSingleSelectSheet(
               searchList: searchList,
               context: context,
               onSearchSelected: onSearchSelected,
@@ -75,10 +76,11 @@ class SearchSheet extends StatefulWidget {
   }
 
   @override
-  _SearchSheetState createState() => _SearchSheetState();
+  _SearchSingleSelectSheetState createState() =>
+      _SearchSingleSelectSheetState();
 }
 
-class _SearchSheetState extends State<SearchSheet> {
+class _SearchSingleSelectSheetState extends State<SearchSingleSelectSheet> {
   bool isFilterOnOff = false;
   List searchList = [];
   Object? groupValue;
@@ -110,10 +112,13 @@ class _SearchSheetState extends State<SearchSheet> {
   Widget build(BuildContext context) {
     return Column(children: [
       Visibility(
-        visible: widget.showHeaderText==null ? false : widget.showHeaderText!,
+          visible:
+              widget.showHeaderText == null ? false : widget.showHeaderText!,
           child: Column(
             children: [
-              const SizedBox(height: 12,),
+              const SizedBox(
+                height: 12,
+              ),
               Text(
                   widget.headerText == null
                       ? "Type Header Text"
@@ -133,12 +138,13 @@ class _SearchSheetState extends State<SearchSheet> {
                 },
                 maxLines: 1,
                 decoration: InputDecoration(
-                  prefixIcon:
-                      widget.showSearchIcon == null
-                          ? widget.showSearchIcon == null ? const Icon(
+                  prefixIcon: widget.showSearchIcon == null
+                      ? widget.showSearchIcon == null
+                          ? const Icon(
                               Icons.search_rounded,
                             )
-                          : null : null,
+                          : null
+                      : null,
                   suffixIcon: (_etSearch.text == '')
                       ? null
                       : InkWell(
@@ -177,9 +183,12 @@ class _SearchSheetState extends State<SearchSheet> {
                           Navigator.pop(context);
                         },
                         child: Container(
-                          padding: widget.showRadioButton==null ?
-                          const EdgeInsets.all(16) : widget.showRadioButton! ?
-                          EdgeInsets.zero : EdgeInsets.zero,
+                          margin: const EdgeInsets.only(bottom: 4),
+                          padding: widget.showRadioButton == null
+                              ? const EdgeInsets.all(16)
+                              : widget.showRadioButton!
+                                  ? EdgeInsets.zero
+                                  : EdgeInsets.zero,
                           color: widget.selectedValue == data
                               ? widget.selectedColor == null
                                   ? Colors.grey[300]
@@ -227,9 +236,12 @@ class _SearchSheetState extends State<SearchSheet> {
                           Navigator.pop(context);
                         },
                         child: Container(
-                          padding: widget.showRadioButton==null ?
-                          const EdgeInsets.all(16) : widget.showRadioButton! ?
-                          EdgeInsets.zero : EdgeInsets.zero,
+                          margin: const EdgeInsets.only(bottom: 4),
+                          padding: widget.showRadioButton == null
+                              ? const EdgeInsets.all(16)
+                              : widget.showRadioButton!
+                                  ? EdgeInsets.zero
+                                  : EdgeInsets.zero,
                           color: widget.selectedValue == data
                               ? widget.selectedColor == null
                                   ? Colors.grey[300]
