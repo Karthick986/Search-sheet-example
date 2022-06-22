@@ -7,7 +7,6 @@ class SearchMultipleSelectSheet extends StatefulWidget {
   List searchList = [];
   BuildContext context;
   Color? color;
-  Color? selectedColor;
   bool? showSearchIcon;
   double? height;
   Function onSearchSelected;
@@ -17,7 +16,6 @@ class SearchMultipleSelectSheet extends StatefulWidget {
   bool? showHeaderText;
   String? searchHintText;
   String? headerText;
-  bool? showCheckboxButton;
   Color? checkboxActiveColor;
   TextStyle? searchTextStyle;
   TextStyle? headerTextStyle;
@@ -32,8 +30,6 @@ class SearchMultipleSelectSheet extends StatefulWidget {
       this.autoFocus,
       required this.onSearchSelected,
       this.isSearchable,
-      this.selectedColor,
-      this.showCheckboxButton,
       this.checkboxActiveColor,
       this.searchTextStyle,
       this.headerText,
@@ -52,16 +48,14 @@ class SearchMultipleSelectSheet extends StatefulWidget {
           return Container(
             color: color,
             child: SearchMultipleSelectSheet(
-              searchList: searchList,
+              searchList: searchList.toSet().toList(),
               context: context,
               onSearchSelected: onSearchSelected,
               color: color,
               height: height,
               showSearchIcon: showSearchIcon,
-              selectedValue: selectedValue,
+              selectedValue: selectedValue.toSet().toList(),
               autoFocus: autoFocus,
-              showCheckboxButton: showCheckboxButton,
-              selectedColor: selectedColor,
               isSearchable: isSearchable,
               searchHintText: searchHintText,
               checkboxActiveColor: checkboxActiveColor,
@@ -156,14 +150,7 @@ class _SearchMultipleSelectSheetState extends State<SearchMultipleSelectSheet> {
                       : null,
                   suffixIcon: (_etSearch.text == '')
                       ? null
-                      : InkWell(
-                          onTap: () {
-                            setState(() {
-                              _etSearch = TextEditingController(text: '');
-                              _searchFilter();
-                            });
-                          },
-                          child: const Icon(Icons.close, size: 20)),
+                      : const Icon(Icons.close, size: 20),
                   isDense: true,
                   border: const OutlineInputBorder(
                     borderSide: BorderSide.none,
@@ -199,44 +186,27 @@ class _SearchMultipleSelectSheetState extends State<SearchMultipleSelectSheet> {
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 4),
-                        padding: widget.showCheckboxButton == null
-                            ? const EdgeInsets.all(16)
-                            : widget.showCheckboxButton!
-                                ? EdgeInsets.zero
-                                : EdgeInsets.zero,
-                        color: widget.selectedValue.contains(searchList[index])
-                            ? widget.selectedColor == null
-                                ? Colors.grey[300]
-                                : widget.selectedColor!
-                            : null,
                         child: Row(
                           children: <Widget>[
-                            widget.showCheckboxButton != null
-                                ? widget.showCheckboxButton!
-                                    ? Checkbox(
-                                        activeColor:
-                                            widget.checkboxActiveColor == null
-                                                ? null
-                                                : widget.checkboxActiveColor!,
-                                        value: checkedValue[index],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            checkedValue[index] = value!;
-                                            if (widget.selectedValue
-                                                .contains(searchList[index])) {
-                                              widget.selectedValue
-                                                  .remove(searchList[index]);
-                                            } else {
-                                              widget.selectedValue
-                                                  .add(searchList[index]);
-                                            }
-                                          });
-                                          widget.onSearchSelected(
-                                              widget.selectedValue);
-                                        },
-                                      )
-                                    : Container()
-                                : Container(),
+                            Checkbox(
+                              activeColor: widget.checkboxActiveColor == null
+                                  ? null
+                                  : widget.checkboxActiveColor!,
+                              value: checkedValue[index],
+                              onChanged: (value) {
+                                setState(() {
+                                  checkedValue[index] = value!;
+                                  if (widget.selectedValue
+                                      .contains(searchList[index])) {
+                                    widget.selectedValue
+                                        .remove(searchList[index]);
+                                  } else {
+                                    widget.selectedValue.add(searchList[index]);
+                                  }
+                                });
+                                widget.onSearchSelected(widget.selectedValue);
+                              },
+                            ),
                             Text(searchList[index].toString(),
                                 style: widget.searchTextStyle),
                           ],
@@ -265,45 +235,28 @@ class _SearchMultipleSelectSheetState extends State<SearchMultipleSelectSheet> {
                       },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 4),
-                        padding: widget.showCheckboxButton == null
-                            ? const EdgeInsets.all(16)
-                            : widget.showCheckboxButton!
-                                ? EdgeInsets.zero
-                                : EdgeInsets.zero,
-                        color: widget.selectedValue
-                                .contains(widget.searchList[index])
-                            ? widget.selectedColor == null
-                                ? Colors.grey[300]
-                                : widget.selectedColor!
-                            : null,
                         child: Row(
                           children: <Widget>[
-                            widget.showCheckboxButton != null
-                                ? widget.showCheckboxButton!
-                                    ? Checkbox(
-                                        activeColor:
-                                            widget.checkboxActiveColor == null
-                                                ? null
-                                                : widget.checkboxActiveColor!,
-                                        value: checkedValue[index],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            checkedValue[index] = value!;
-                                            if (widget.selectedValue.contains(
-                                                widget.searchList[index])) {
-                                              widget.selectedValue.remove(
-                                                  widget.searchList[index]);
-                                            } else {
-                                              widget.selectedValue.add(
-                                                  widget.searchList[index]);
-                                            }
-                                          });
-                                          widget.onSearchSelected(
-                                              widget.selectedValue);
-                                        },
-                                      )
-                                    : Container()
-                                : Container(),
+                            Checkbox(
+                              activeColor: widget.checkboxActiveColor == null
+                                  ? null
+                                  : widget.checkboxActiveColor!,
+                              value: checkedValue[index],
+                              onChanged: (value) {
+                                setState(() {
+                                  checkedValue[index] = value!;
+                                  if (widget.selectedValue
+                                      .contains(widget.searchList[index])) {
+                                    widget.selectedValue
+                                        .remove(widget.searchList[index]);
+                                  } else {
+                                    widget.selectedValue
+                                        .add(widget.searchList[index]);
+                                  }
+                                });
+                                widget.onSearchSelected(widget.selectedValue);
+                              },
+                            ),
                             Text(widget.searchList[index].toString(),
                                 style: widget.searchTextStyle),
                           ],
