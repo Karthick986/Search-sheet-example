@@ -148,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               searchList: list,
                               context: context,
                               selectedValue: selectedList,
+                              buttonColor: Colors.purple,
                               onSearchSelected: onMultiSearchSelected)
                           .showSheet();
                     },

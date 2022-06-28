@@ -19,6 +19,9 @@ class SearchMultipleSelectSheet extends StatefulWidget {
   Color? checkboxActiveColor;
   TextStyle? searchTextStyle;
   TextStyle? headerTextStyle;
+  TextStyle? applyButtonStyle;
+  TextStyle? cancelButtonStyle;
+  Color? buttonColor;
 
   SearchMultipleSelectSheet(
       {Key? key,
@@ -36,7 +39,10 @@ class SearchMultipleSelectSheet extends StatefulWidget {
       this.headerTextStyle,
       this.showHeaderText,
       required this.selectedValue,
-      this.searchHintText})
+      this.searchHintText,
+      this.cancelButtonStyle,
+        this.applyButtonStyle,
+      this.buttonColor})
       : super(key: key);
 
   showSheet() async {
@@ -48,22 +54,24 @@ class SearchMultipleSelectSheet extends StatefulWidget {
           return Container(
             color: color,
             child: SearchMultipleSelectSheet(
-              searchList: searchList.toSet().toList(),
-              context: context,
-              onSearchSelected: onSearchSelected,
-              color: color,
-              height: height,
-              showSearchIcon: showSearchIcon,
-              selectedValue: selectedValue.toSet().toList(),
-              autoFocus: autoFocus,
-              isSearchable: isSearchable,
-              searchHintText: searchHintText,
-              checkboxActiveColor: checkboxActiveColor,
-              searchTextStyle: searchTextStyle,
-              headerTextStyle: headerTextStyle,
-              showHeaderText: showHeaderText,
-              headerText: headerText,
-            ),
+                searchList: searchList.toSet().toList(),
+                context: context,
+                onSearchSelected: onSearchSelected,
+                color: color,
+                height: height,
+                showSearchIcon: showSearchIcon,
+                selectedValue: selectedValue.toSet().toList(),
+                autoFocus: autoFocus,
+                isSearchable: isSearchable,
+                searchHintText: searchHintText,
+                checkboxActiveColor: checkboxActiveColor,
+                searchTextStyle: searchTextStyle,
+                headerTextStyle: headerTextStyle,
+                showHeaderText: showHeaderText,
+                headerText: headerText,
+                applyButtonStyle: applyButtonStyle,
+                cancelButtonStyle: cancelButtonStyle,
+                buttonColor: buttonColor),
             height: height ?? MediaQuery.of(context).size.height / 1.5,
           );
         });
@@ -79,9 +87,7 @@ class _SearchMultipleSelectSheetState extends State<SearchMultipleSelectSheet> {
   List searchList = [];
   List<bool> checkedValue = [];
 
-  // List<String> selectedValue = [];
-
-  TextEditingController _etSearch = TextEditingController();
+  final TextEditingController _etSearch = TextEditingController();
 
   void _searchFilter() {
     if (_etSearch.text.isEmpty) {
@@ -168,103 +174,185 @@ class _SearchMultipleSelectSheetState extends State<SearchMultipleSelectSheet> {
       ),
       Expanded(
           child: isFilterOnOff
-              ? ListView.builder(
-                  itemCount: searchList.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          checkedValue[index] = !checkedValue[index];
-                          if (widget.selectedValue
-                              .contains(searchList[index])) {
-                            widget.selectedValue.remove(searchList[index]);
-                          } else {
-                            widget.selectedValue.add(searchList[index]);
-                          }
-                        });
-                        widget.onSearchSelected(widget.selectedValue);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          children: <Widget>[
-                            Checkbox(
-                              activeColor: widget.checkboxActiveColor == null
-                                  ? null
-                                  : widget.checkboxActiveColor!,
-                              value: checkedValue[index],
-                              onChanged: (value) {
-                                setState(() {
-                                  checkedValue[index] = value!;
-                                  if (widget.selectedValue
-                                      .contains(searchList[index])) {
-                                    widget.selectedValue
-                                        .remove(searchList[index]);
-                                  } else {
-                                    widget.selectedValue.add(searchList[index]);
-                                  }
-                                });
-                                widget.onSearchSelected(widget.selectedValue);
-                              },
+              ? Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: searchList.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                checkedValue[index] = !checkedValue[index];
+                                if (widget.selectedValue
+                                    .contains(searchList[index])) {
+                                  widget.selectedValue
+                                      .remove(searchList[index]);
+                                } else {
+                                  widget.selectedValue.add(searchList[index]);
+                                }
+                              });
+                              widget.onSearchSelected(widget.selectedValue);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: <Widget>[
+                                  Checkbox(
+                                    activeColor:
+                                        widget.checkboxActiveColor == null
+                                            ? null
+                                            : widget.checkboxActiveColor!,
+                                    value: checkedValue[index],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        checkedValue[index] = value!;
+                                        if (widget.selectedValue
+                                            .contains(searchList[index])) {
+                                          widget.selectedValue
+                                              .remove(searchList[index]);
+                                        } else {
+                                          widget.selectedValue
+                                              .add(searchList[index]);
+                                        }
+                                      });
+                                      widget.onSearchSelected(
+                                          widget.selectedValue);
+                                    },
+                                  ),
+                                  Text(searchList[index].toString(),
+                                      style: widget.searchTextStyle),
+                                ],
+                              ),
                             ),
-                            Text(searchList[index].toString(),
-                                style: widget.searchTextStyle),
-                          ],
-                        ),
+                          );
+                        },
+                        shrinkWrap: true,
                       ),
-                    );
-                  },
-                  shrinkWrap: true,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child:
+                                Text("Cancel", style: widget.cancelButtonStyle,)),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                          Expanded(
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Apply",
+                                  style: widget.applyButtonStyle),
+                              color: widget.buttonColor,
+                              padding: const EdgeInsets.all(8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 )
-              : ListView.builder(
-                  itemCount: widget.searchList.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          checkedValue[index] = !checkedValue[index];
-                          if (widget.selectedValue
-                              .contains(widget.searchList[index])) {
-                            widget.selectedValue
-                                .remove(widget.searchList[index]);
-                          } else {
-                            widget.selectedValue.add(widget.searchList[index]);
-                          }
-                        });
-                        widget.onSearchSelected(widget.selectedValue);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 4),
-                        child: Row(
-                          children: <Widget>[
-                            Checkbox(
-                              activeColor: widget.checkboxActiveColor == null
-                                  ? null
-                                  : widget.checkboxActiveColor!,
-                              value: checkedValue[index],
-                              onChanged: (value) {
-                                setState(() {
-                                  checkedValue[index] = value!;
-                                  if (widget.selectedValue
-                                      .contains(widget.searchList[index])) {
-                                    widget.selectedValue
-                                        .remove(widget.searchList[index]);
-                                  } else {
-                                    widget.selectedValue
-                                        .add(widget.searchList[index]);
-                                  }
-                                });
-                                widget.onSearchSelected(widget.selectedValue);
-                              },
+              : Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: widget.searchList.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                checkedValue[index] = !checkedValue[index];
+                                if (widget.selectedValue
+                                    .contains(widget.searchList[index])) {
+                                  widget.selectedValue
+                                      .remove(widget.searchList[index]);
+                                } else {
+                                  widget.selectedValue
+                                      .add(widget.searchList[index]);
+                                }
+                              });
+                              widget.onSearchSelected(widget.selectedValue);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: <Widget>[
+                                  Checkbox(
+                                    activeColor:
+                                        widget.checkboxActiveColor == null
+                                            ? null
+                                            : widget.checkboxActiveColor!,
+                                    value: checkedValue[index],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        checkedValue[index] = value!;
+                                        if (widget.selectedValue.contains(
+                                            widget.searchList[index])) {
+                                          widget.selectedValue
+                                              .remove(widget.searchList[index]);
+                                        } else {
+                                          widget.selectedValue
+                                              .add(widget.searchList[index]);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  Text(widget.searchList[index].toString(),
+                                      style: widget.searchTextStyle),
+                                ],
+                              ),
                             ),
-                            Text(widget.searchList[index].toString(),
-                                style: widget.searchTextStyle),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                  shrinkWrap: true,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child:
+                                    Text("Cancel", style: widget.cancelButtonStyle,)),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.1,
+                          ),
+                          Expanded(
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Apply",
+                                  style: widget.applyButtonStyle),
+                              color: widget.buttonColor,
+                              padding: const EdgeInsets.all(8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 )),
     ]);
   }
